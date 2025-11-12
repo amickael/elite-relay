@@ -17,7 +17,6 @@ _open_method_map: dict[OpenMethod, int] = {
 
 class BrowserOptions(BaseModel):
     url: HttpUrl
-    params: dict[str, str] = {}
     focus: bool = False
     open_method: OpenMethod = 'default'
 
@@ -25,13 +24,8 @@ class BrowserOptions(BaseModel):
 class BrowserPlugin(BasePlugin):
     def open(self):
         options = BrowserOptions.model_validate(self.config.options)
-        params: dict[str, str] = {}
-        for param, path in options.params.items():
-            if (value := self.entry.search(path)) is None:
-                continue
-            params[param] = value
         webbrowser.open(
-            url=options.url.unicode_string().format(**params),
+            url=self.format_string(options.url),
             new=_open_method_map[options.open_method],
             autoraise=options.focus,
         )
