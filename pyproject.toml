@@ -1,7 +1,7 @@
 [project]
 name = "elite-relay"
 version = "0.1.0"
-description = " Elite: Dangerous Journal Event Handler "
+description = "Elite: Dangerous Journal Event Handler"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
