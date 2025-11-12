@@ -2,8 +2,8 @@ import logging
 import threading
 import time
 
-from elite_relay.handlers import registry
 from elite_relay.journal import JournalEntry, JournalMonitor
+from elite_relay.plugins import registry
 from elite_relay.settings import Settings
 
 logging.basicConfig(
@@ -23,33 +23,42 @@ class App:
         return Settings.read()
 
     def handle_entry(self, entry: JournalEntry):
-        for handler_config in self.settings.handlers:
-            handler_cls = registry.get(handler_config.plugin)
-            if not handler_cls:
-                logging.warning(f'Invalid plugin "{handler_config.plugin}"')
+        for i, plugin_config in enumerate(self.settings.plugins, start=1):
+            plugin_id = f'{i} ({plugin_config})'
+            if not plugin_config.enabled:
+                logging.debug(
+                    f'Plugin {plugin_id} is disabled, skipping handling {entry}'
+                )
                 continue
-            handler_obj = handler_cls(entry, handler_config)
+            plugin_cls = registry.get(plugin_config.plugin)
+            if not plugin_cls:
+                logging.warning(f'Plugin {plugin_id} is invalid')
+                continue
+            plugin_obj = plugin_cls(entry, plugin_config)
             # noinspection PyBroadException
             try:
-                result = handler_obj.handle()
+                result = plugin_obj.handle()
             except Exception:
-                result = False
-                logging.exception(
-                    f'Plugin "{handler_config.plugin}" failed to handle {entry}'
-                )
+                logging.exception(f'Plugin {plugin_id} failed to handle {entry}')
+                continue
             if result:
-                logging.info(f'Plugin "{handler_config.plugin}" handled {entry}')
+                logging.info(f'Plugin {plugin_id} handled {entry}')
                 time.sleep(self.settings.event_interval)
+            else:
+                logging.debug(f'Plugin {plugin_id} skipped handling {entry}')
 
     def start(self):
+        logging.info(
+            f'Listening for new Elite: Dangerous journal entries in "{self.settings.logs_dir}"'
+        )
         while not self._stop.is_set():
             try:
                 for entry in self.monitor.iter_entries():
                     self.handle_entry(entry)
-                    logging.debug(f'Processed {entry}')
                 time.sleep(self.settings.poll_interval)
             except KeyboardInterrupt:
                 self.stop()
+        logging.info('Shutting down')
 
     def stop(self):
         self._stop.set()

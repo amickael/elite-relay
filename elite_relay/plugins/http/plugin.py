@@ -1,9 +1,9 @@
 import requests
 from pydantic import BaseModel, HttpUrl
 
-from elite_relay.handlers.base import BaseHandler
+from elite_relay.plugins.base import BasePlugin
 
-__all__ = ['HttpHandler']
+__all__ = ['HttpPlugin']
 
 
 class HttpOptions(BaseModel):
@@ -12,7 +12,7 @@ class HttpOptions(BaseModel):
     query: dict[str, str] = {}
 
 
-class HttpHandler(BaseHandler):
+class HttpPlugin(BasePlugin):
     def post(self):
         options = HttpOptions.model_validate(self.config.options)
         requests.post(

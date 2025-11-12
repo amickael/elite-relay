@@ -3,9 +3,9 @@ import webbrowser
 
 from pydantic import BaseModel, HttpUrl
 
-from elite_relay.handlers.base import BaseHandler
+from elite_relay.plugins.base import BasePlugin
 
-__all__ = ['BrowserHandler']
+__all__ = ['BrowserPlugin']
 
 OpenMethod = t.Literal['default', 'window', 'tab']
 _open_method_map: dict[OpenMethod, int] = {
@@ -22,7 +22,7 @@ class BrowserOptions(BaseModel):
     open_method: OpenMethod = 'default'
 
 
-class BrowserHandler(BaseHandler):
+class BrowserPlugin(BasePlugin):
     def open(self):
         options = BrowserOptions.model_validate(self.config.options)
         params: dict[str, str] = {}

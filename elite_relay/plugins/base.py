@@ -2,11 +2,11 @@ import logging
 from abc import ABC
 
 from elite_relay.journal import JournalEntry
-from elite_relay.settings import HandlerConfig
+from elite_relay.settings import PluginConfig
 
 
-class BaseHandler(ABC):
-    def __init__(self, entry: JournalEntry, config: HandlerConfig):
+class BasePlugin(ABC):
+    def __init__(self, entry: JournalEntry, config: PluginConfig):
         self.entry = entry
         self.config = config
 

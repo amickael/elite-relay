@@ -12,10 +12,10 @@ from pydantic_settings import (
     YamlConfigSettingsSource,
 )
 
-__all__ = ['Settings', 'HandlerConfig', 'HandlerFilter']
+__all__ = ['Settings', 'PluginConfig', 'EntryFilter']
 
 
-class HandlerFilter(BaseModel):
+class EntryFilter(BaseModel):
     key: str
     eq: str
     regex: bool = False
@@ -31,11 +31,15 @@ class HandlerFilter(BaseModel):
         return self.eq == value
 
 
-class HandlerConfig(BaseModel):
+class PluginConfig(BaseModel):
     plugin: str
     action: str
-    filters: list[HandlerFilter] = []
+    filters: list[EntryFilter] = []
     options: dict
+    enabled: bool = True
+
+    def __str__(self):
+        return f'{self.plugin}.{self.action}'
 
     @field_validator('plugin', 'action', mode='after')
     @classmethod
@@ -50,7 +54,7 @@ class Settings(BaseSettings):
     logs_dir: DirectoryPath = (
         Path.home() / 'Saved Games' / 'Frontier Developments' / 'Elite Dangerous'
     )
-    handlers: list[HandlerConfig] = []
+    plugins: list[PluginConfig] = []
     event_interval: int | float = 0.5
     poll_interval: int | float = 1
     log_level: int = logging.INFO
