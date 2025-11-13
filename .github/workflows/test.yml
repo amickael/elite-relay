@@ -5,9 +5,13 @@ on:
       - main
     paths:
       - '**.py'
+      - '.github/workflows/**'
   pull_request_target:
     branches:
       - main
+    paths:
+      - '**.py'
+      - '.github/workflows/**'
   label:
     types:
       - created
