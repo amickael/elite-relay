@@ -43,6 +43,7 @@ def write_entry(latest_journal, get_timestamp):
 
 
 def test_init(journal_monitor, write_entry):
+    assert journal_monitor.last_entry is None
     entry = write_entry('FSDJump', StarSystem="Barnard's Star")
     assert list(journal_monitor.iter_entries()) == []
     assert journal_monitor.last_entry == entry
