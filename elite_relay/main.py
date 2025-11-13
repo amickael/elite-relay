@@ -64,5 +64,9 @@ class App:
         self._stop.set()
 
 
-if __name__ == '__main__':
+def run():
     App().start()
+
+
+if __name__ == '__main__':
+    run()

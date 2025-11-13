@@ -25,6 +25,12 @@ dev = [
     "types-requests>=2.32.4.20250913",
 ]
 
+[project.scripts]
+elite-relay = "elite_relay.main:run"
+
+[tool.uv]
+package = true
+
 [tool.isort]
 py_version=313
 profile = "black"
