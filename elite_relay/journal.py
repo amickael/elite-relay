@@ -157,8 +157,6 @@ class JournalMonitor:
                     return new_entries
                 if entry == self.last_entry:
                     return new_entries
-                if entry in self.recent_entries:
-                    continue
                 new_entries.append(entry)
         return new_entries
 
@@ -166,5 +164,7 @@ class JournalMonitor:
         if not (new_entries := self._get_new_entries()):
             return
         for entry in reversed(new_entries):
+            if entry in self.recent_entries:
+                continue
             yield entry
             self.last_entry = entry
