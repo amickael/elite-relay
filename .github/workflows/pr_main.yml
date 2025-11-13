@@ -1,0 +1,35 @@
+name: Validate PRs and main
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.py'
+      - '.github/workflows/**'
+  pull_request_target:
+    branches:
+      - main
+    paths:
+      - '**.py'
+      - '.github/workflows/**'
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.9.9"
+          enable-cache: true
+      - name: Sync project
+        run: uv sync --locked --dev
+      - name: mypy
+        run: uv run mypy elite_relay tests
+      - name: black
+        run: uv run black elite_relay tests --check
+      - name: isort
+        run: uv run isort elite_relay tests --check-only
+  test:
+    uses: ./.github/workflows/test.yml
