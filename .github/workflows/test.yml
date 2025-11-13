@@ -1,5 +1,16 @@
 name: Test
-on: [push]
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.py'
+  pull_request_target:
+    branches:
+      - main
+  label:
+    types:
+      - created
 jobs:
   lint:
     name: lint
