@@ -70,3 +70,24 @@ def test_old_entry(journal_monitor, write_entry, format_timestamp):
     old_ts = journal_monitor.last_entry.timestamp - dt.timedelta(seconds=1)
     write_entry('FSDJump', timestamp=format_timestamp(old_ts))
     assert list(journal_monitor.iter_entries()) == []
+
+
+def test_entry_key_determinism(write_entry, get_timestamp, format_timestamp):
+    ts = dt.datetime.now()
+    entry_a = write_entry('FSDJump', timestamp=format_timestamp(ts))
+    entry_b = write_entry(
+        'FSDJump', timestamp=format_timestamp(ts + dt.timedelta(seconds=1))
+    )
+    assert entry_a.key != entry_b.key
+
+    ts = get_timestamp()
+    entry_a = write_entry('FSDJump', timestamp=ts)
+    entry_b = write_entry('FSDJump', timestamp=ts)
+    assert entry_a.key == entry_b.key
+
+
+def test_entry_key_update(write_entry, get_timestamp, format_timestamp):
+    entry = write_entry('FSDJump')
+    old_key = str(entry.key)
+    entry.type = 'StartJump'
+    assert entry.key != old_key

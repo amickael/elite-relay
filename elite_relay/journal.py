@@ -23,7 +23,7 @@ class JournalEntry(BaseModel):
     @cached_property
     def key(self) -> str:
         return hashlib.md5(
-            self.model_dump_json(include={'data'}).encode(),
+            self.model_dump_json(exclude={'key'}).encode(),
             usedforsecurity=False,
         ).hexdigest()
 
