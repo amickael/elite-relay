@@ -43,9 +43,9 @@ def write_entry(latest_journal, get_timestamp):
 
 
 def test_init(journal_monitor, write_entry):
-    with pytest.raises(StopIteration):
-        next(journal_monitor.iter_entries())
-    assert journal_monitor.last_entry.key == '9fa3ca33dd970dc079912a7fa30a53ca'
+    entry = write_entry('FSDJump', StarSystem="Barnard's Star")
+    assert list(journal_monitor.iter_entries()) == []
+    assert journal_monitor.last_entry == entry
 
 
 def test_new_entry(journal_monitor, write_entry):
