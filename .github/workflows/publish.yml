@@ -3,10 +3,6 @@ on:
   push:
     tags:
       - v*
-    paths:
-      - '**.py'
-      - pyproject.toml
-      - uv.lock
 jobs:
   test:
     uses: ./.github/workflows/test.yml
