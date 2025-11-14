@@ -15,6 +15,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "black>=25.9.0",
+    "cx-freeze>=8.4.1",
     "ipython>=9.7.0",
     "isort>=7.0.0",
     "mypy>=1.18.2",
@@ -30,6 +31,11 @@ elite-relay = "elite_relay.main:run"
 
 [tool.uv]
 package = true
+
+[tool.cxfreeze]
+executables = [
+    {script = "elite_relay/main.py", base = "console"}
+]
 
 [tool.isort]
 py_version=313
