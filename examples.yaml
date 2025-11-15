@@ -1,0 +1,15 @@
+plugins:
+  # Copy the star system name to the clipboard after a jump
+  - plugin: clipboard
+    action: copy
+    filters:
+      - key: type
+        eq: FSDJump
+    options:
+      text: ${data.StarSystem}
+
+  # Open the inara.cz "search nearest" page when jumping to a new system
+  - plugin: browser
+    action: navigate
+    options:
+      url: https://inara.cz/elite/nearest-stations/?formbrief=1&ps1=${data.StarSystem}

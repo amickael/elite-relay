@@ -9,8 +9,8 @@ and allows you respond to them in certain ways, including:
 * Opening a templated URL in your browser, e.g. opening an [Inara.cz "search nearest"](https://inara.cz/elite/nearest/)
   page when jumping to a new system.
 
-Event handlers ("plugins") are defined in `.edr/config.yaml` located in your home directory. See the configuration spec
-for examples and more information.
+Event handlers ("plugins") are defined in `.edr/config.yaml` located in your home directory. See ["Configuring plugins"](#configuring-plugins)
+for more information, or check out some examples in [`examples.yaml`](examples.yaml).
 
 ## Installation
 
@@ -31,4 +31,54 @@ You can now run `elite-relay` in a terminal to start the program.
 
 ## Configuring plugins
 
-...TBD...
+Event handlers ("plugins") are defined in `.edr/config.yaml` located in your home directory. There are a few basic options
+that apply to all plugins, as well as plugin-specific options that are defined under the `options` key. Let's start with a
+basic example that will copy the name of the star system to our clipboard whenever an `FSDJump` event occurs:
+```yaml
+plugins:
+  - plugin: clipboard
+    action: copy
+    filters:
+      - key: type
+        eq: FSDJump
+    options:
+      text: ${data.StarSystem}
+```
+Let's break it down:
+
+### Global options
+
+#### Plugins & actions
+The `plugin: clipboard` key tells the program which "plugin" to use when responding to an event. All plugins are comprised
+of different "actions," in this example it's `copy`.
+
+#### Filters
+Filters allow us to only respond to events that we care about. In this example we only want to copy text to our clipboard
+whenever the `FSDJump` event type is recorded, hence the `filters` block above:
+```yaml
+filters:
+  - key: type
+    eq: FSDJump
+```
+
+In this instance we're telling the program to only respond to events where the `type` is _exactly equal_ to `FSDJump`.
+Filters can also use [regular expressions](https://regexone.com/) for more complex filtering operations; however let's keep
+things simple for the time being.
+
+Filter keys may use [JMESPath](https://jmespath.org/tutorial.html) syntax to reference deeply-nested information within
+the event data.
+
+### Plugin-specific options
+The `options` key above provides _plugin-specific_ options that are documented alongside the code for each plugin
+in the [plugins directory](elite_relay/plugins).
+
+In this example the `clipboard.copy` action has a required option for the text we wish to copy. The text is _templated_,
+meaning that we can reference data within the event to copy. In this instance `${data.StarSystem}` will be converted to
+the name of the actual star system we just jumped to:
+```yaml
+options:
+  text: ${data.StarSystem}
+```
+
+Templated text may use [JMESPath](https://jmespath.org/tutorial.html) syntax to reference deeply-nested information within
+the event data.
