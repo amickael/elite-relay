@@ -1,6 +1,9 @@
 # Elite Relay
 Elite: Dangerous Journal Event Handler
 
+> [!IMPORTANT]
+> This document is a work-in-progress and may contain incomplete information.
+
 ## Introduction
 `elite-relay` is a small program that tracks events recorded in your [Elite: Dangerous journal file](https://elite-journal.readthedocs.io/en/latest/)
 and allows you respond to them in certain ways, including:
