@@ -65,11 +65,29 @@ filters:
 ```
 
 In this instance we're telling the program to only respond to events where the `type` is _exactly equal_ to `FSDJump`.
-Filters can also use [regular expressions](https://regexone.com/) for more complex filtering operations; however let's keep
-things simple for the time being.
 
-Filter keys may use [JMESPath](https://jmespath.org/tutorial.html) syntax to reference deeply-nested information within
-the event data.
+Filters can also use [regular expressions](https://regexone.com/) (regex) for more complex filtering operations. To use
+regex filtering enable it by setting `regex: true` in the filter; now the expression in the `eq` key will be evaluated
+as regex. For example if we wanted to narrow our filter further by only triggering on systems that begin with "HIP" we
+could do the following:
+```yaml
+filters:
+  - key: type
+    eq: FSDJump
+  - key: data.StarSystem
+    eq: ^HIP (.*)$
+    regex: true
+```
+
+Filter keys may also use [JMESPath](https://jmespath.org/tutorial.html) syntax to reference deeply-nested information within
+the event data. For example, if we wanted to trigger if the first power in the system is "Li Yong-Rui" we would do:
+```yaml
+filters:
+  - key: type
+    eq: FSDJump
+  - key: data.Powers[0]
+    eq: Li Yong-Rui
+```
 
 ### Plugin-specific options
 The `options` key above provides _plugin-specific_ options that are documented alongside the code for each plugin
@@ -82,6 +100,3 @@ the name of the actual star system we just jumped to:
 options:
   text: ${data.StarSystem}
 ```
-
-Templated text may use [JMESPath](https://jmespath.org/tutorial.html) syntax to reference deeply-nested information within
-the event data.
