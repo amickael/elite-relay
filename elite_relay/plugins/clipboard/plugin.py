@@ -10,9 +10,10 @@ class ClipboardOptions(BaseModel):
 
 
 class ClipboardPlugin(BasePlugin):
+    OptionsModel = ClipboardOptions
+
     def copy(self):
-        options = ClipboardOptions.model_validate(self.config.options)
-        value = self.format_string(options.text)
-        if options.strip:
+        value = self.format_string(self.options.text)
+        if self.options.strip:
             value = value.strip()
         pyperclip.copy(value)

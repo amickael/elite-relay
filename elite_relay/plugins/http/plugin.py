@@ -13,11 +13,12 @@ class HttpOptions(BaseModel):
 
 
 class HttpPlugin(BasePlugin):
+    OptionsModel = HttpOptions
+
     def post(self):
-        options = HttpOptions.model_validate(self.config.options)
         requests.post(
-            url=options.url.encoded_string(),
+            url=self.options.url.encoded_string(),
             json=self.entry.model_dump(mode='json'),
-            headers=options.headers,
-            params=options.query,
+            headers=self.options.headers,
+            params=self.options.query,
         ).raise_for_status()
