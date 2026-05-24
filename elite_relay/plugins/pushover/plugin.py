@@ -18,22 +18,23 @@ class PushoverOptions(BaseModel):
 
 
 class PushoverPlugin(BasePlugin):
+    OptionsModel = PushoverOptions
+
     def notify(self):
-        options = PushoverOptions.model_validate(self.config.options)
         payload: dict[str, t.Any] = {
-            'token': options.api_token,
-            'user': options.user_key,
-            'message': self.format_string(options.message),
+            'token': self.options.api_token,
+            'user': self.options.user_key,
+            'message': self.format_string(self.options.message),
         }
-        if options.title is not None:
-            payload['title'] = self.format_string(options.title)
-        if options.priority is not None:
-            payload['priority'] = options.priority
-        if options.sound is not None:
-            payload['sound'] = options.sound
-        if options.ttl is not None:
-            payload['ttl'] = options.ttl
+        if self.options.title is not None:
+            payload['title'] = self.format_string(self.options.title)
+        if self.options.priority is not None:
+            payload['priority'] = self.options.priority
+        if self.options.sound is not None:
+            payload['sound'] = self.options.sound
+        if self.options.ttl is not None:
+            payload['ttl'] = self.options.ttl
         requests.post(
-            url=options.endpoint.encoded_string(),
+            url=self.options.endpoint.encoded_string(),
             data=payload,
         ).raise_for_status()

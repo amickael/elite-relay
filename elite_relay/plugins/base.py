@@ -1,19 +1,30 @@
 import logging
 import re
+import typing as t
 from abc import ABC
+from functools import cached_property
 
-from pydantic import AnyUrl
+from pydantic import AnyUrl, BaseModel
 
 from elite_relay.journal import JournalEntry
 from elite_relay.settings import PluginConfig
 
+T = t.TypeVar("T", bound=BaseModel)
 
-class BasePlugin(ABC):
+
+class BasePlugin(ABC, t.Generic[T]):
+    OptionsModel: t.Type[T] | None = None
     RE_PARAMS = re.compile(r'\${([a-zA-Z0-9._-]+)}')
 
     def __init__(self, entry: JournalEntry, config: PluginConfig):
         self.entry = entry
         self.config = config
+
+    @cached_property
+    def options(self) -> T:
+        if self.OptionsModel:
+            return self.OptionsModel.model_validate(self.config.options)
+        raise ValueError('OptionsModel is undefined')
 
     def format_string(self, value: str | AnyUrl) -> str:
         if isinstance(value, AnyUrl):

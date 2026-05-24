@@ -27,10 +27,11 @@ class BrowserOptions(BaseModel):
 
 
 class BrowserPlugin(BasePlugin):
+    OptionsModel = BrowserOptions
+
     def open(self):
-        options = BrowserOptions.model_validate(self.config.options)
         webbrowser.open(
-            url=self.format_string(options.url),
-            new=options.open_method_code,
-            autoraise=options.focus,
+            url=self.format_string(self.options.url),
+            new=self.options.open_method_code,
+            autoraise=self.options.focus,
         )
